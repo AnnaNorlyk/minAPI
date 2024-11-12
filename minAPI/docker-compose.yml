@@ -1,0 +1,12 @@
+﻿version: '3.8'
+
+services:
+  minimal-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80" 
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    restart: always

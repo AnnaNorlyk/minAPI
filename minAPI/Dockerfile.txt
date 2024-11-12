@@ -1,0 +1,22 @@
+﻿# Use the official ASP.NET image for the base runtime environment
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+WORKDIR /app
+EXPOSE 80
+
+# Use the .NET SDK to build the application
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /src
+
+# Copy the project file to the container and restore dependencies
+COPY ["minAPI.csproj", "./"]
+RUN dotnet restore "minAPI.csproj"
+
+# Copy the rest of your application files and build the application
+COPY . .
+RUN dotnet publish "minAPI.csproj" -c Release -o /app/publish
+
+# Use the runtime image to run the application
+FROM base AS final
+WORKDIR /app
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "minAPI.dll"]
