@@ -1,12 +1,26 @@
-﻿version: '3.8'
+﻿version: '3.1'
 
-services:
-  minimal-api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8080:80" 
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Production
+services: 
+  mongohost:
+    image: mongo:7
     restart: always
+    container_name: mongohost 
+    volumes: 
+      - mongohost_db:/data/db
+    ports:
+      - 27017:27017  
+
+  minapi: 
+    build: .
+    restart: always
+    container_name: minapi
+    ports:
+      - 5000:5000  
+    depends_on:
+      - mongohost
+    environment:
+      - MongoDb__ConnectionString=mongodb://mongohost:27017  
+      - MongoDb__DatabaseName=ParcelTrackingRUsDb  
+
+volumes:
+  mongohost_db:
